@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       color: Colors.teal,
                       onPressed: () async {
-                        await NetWork.newTodo(title: _controller.text);
+                        await NetWork.newTodo(title: _controller.text, cmt: "");
                         getInitData();
                       },
                       child: const Text(

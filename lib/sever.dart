@@ -17,7 +17,7 @@ class NetWork{
     );
     return response;
   }
-  static Future<http.Response> newTodo({required String title}) async {
+  static Future<http.Response> newTodo({required String title, required String cmt}) async {
     final http.Response response = await http.post(
       url,
       headers: <String, String>{
@@ -25,6 +25,7 @@ class NetWork{
       },
       body: jsonEncode(<String, String>{
         'title': title,
+        'cmt': cmt
       }),
     );
     return response;

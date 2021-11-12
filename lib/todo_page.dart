@@ -18,10 +18,13 @@ class _TodoPageState extends State<TodoPage> {
   void initState() {
     todoPage = widget.todo;
     _controller.text = todoPage.cmt ?? '';
-    _controller.addListener(() {
-      NetWork.updateTodo(id: widget.todo.id, cmt: _controller.text);
-    });
+    getData();
     super.initState();
+  }
+  getData() {
+    _controller.addListener(() async {
+      await NetWork.updateTodo(id: widget.todo.id, cmt: _controller.text, title: todoPage.title == ""? widget.todo.title : todoPage.title);
+    });
   }
 
 
@@ -49,9 +52,9 @@ class _TodoPageState extends State<TodoPage> {
                           children: [
                             SizedBox(
                               child: GestureDetector(
-                                onTap: () {
-                                  NetWork.updateTodo(id: widget.todo.id, cmt: _controller.text, title: todoPage.title);
-                                  Navigator.pop(context);
+                                onTap: () async {
+                                  await NetWork.updateTodo(id: widget.todo.id, cmt: _controller.text, title: todoPage.title == ""? widget.todo.title : todoPage.title);
+                                  Navigator.pushNamed(context, "/");
                                 },
                                 child: const Icon(Icons.arrow_back_ios_new),
                               ),

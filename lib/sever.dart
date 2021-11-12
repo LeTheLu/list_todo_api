@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:list_todo_api/models/model_todo.dart';
 
@@ -43,5 +44,22 @@ class NetWork{
       }),
     );
     return response;
+  }
+}
+
+class CheckInternet extends InheritedWidget {
+  final bool checkInternet;
+
+  const CheckInternet({Key? key, required Widget child, required  this.checkInternet ,}) : super(key: key, child: child);
+
+  static CheckInternet of(BuildContext context) {
+    final CheckInternet? result = context.dependOnInheritedWidgetOfExactType<CheckInternet>();
+    assert(result != null, 'No CheckInternet found in context');
+    return result!;
+  }
+
+  @override
+  bool updateShouldNotify(CheckInternet old) {
+    return checkInternet != old.checkInternet;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:list_todo_api/sever.dart';
+import 'package:list_todo_api/witget/internet.dart';
 import 'models/model_todo.dart';
 
 class TodoPage extends StatefulWidget {
@@ -23,97 +24,114 @@ class _TodoPageState extends State<TodoPage> {
     });
     super.initState();
   }
+  @override
+  void dispose() {
+    _controller.clear();
+    super.dispose();
+  }
 
 
 
   @override
   Widget build(BuildContext context) {
+    bool check = CheckInternet.of(context).checkInternet;
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              child: GestureDetector(
-                                onTap: () async {
-                                  await NetWork.updateTodo(id: widget.todo.id, cmt: _controller.text, title: todoPage.title == ""? widget.todo.title : todoPage.title);
-                                  Navigator.pushNamed(context, "/");
-                                },
-                                child: const Icon(Icons.arrow_back_ios_new),
-                              ),
-                            ),
-                            Expanded(
-                                child: GestureDetector(
-                                    onTap: () {
-                                      showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) =>
-                                        _buildPopupDialog(
-                                            context: context,
-                                            todo: todoPage,
-                                        ));
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                          flex: 1,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      await NetWork.updateTodo(id: widget.todo.id, cmt: _controller.text, title: todoPage.title == ""? widget.todo.title : todoPage.title);
+                                      Navigator.pushNamed(context, "/");
                                     },
-                                    child: Container(
-                                        height: 100,
-                                        width:
+                                    child: const Icon(Icons.arrow_back_ios_new),
+                                  ),
+                                ),
+                                Expanded(
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  _buildPopupDialog(
+                                                    context: context,
+                                                    todo: todoPage,
+                                                  ));
+                                        },
+                                        child: Container(
+                                            height: 100,
+                                            width:
                                             MediaQuery.of(context).size.width -
                                                 100,
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey[300],
-                                            borderRadius:
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey[300],
+                                                borderRadius:
                                                 const BorderRadius.all(
                                                     Radius.circular(30))),
-                                        child: Center(
-                                          child: Text(
-                                            todoPage.title ?? '',
-                                            style: const TextStyle(
-                                                color: Colors.teal,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 30),
-                                          ),
-                                        )))),
-                          ])),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    flex: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 8),
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(15)),
-                      child: SingleChildScrollView(
-                        child: TextField(
-                          textInputAction: TextInputAction.done,
-                          controller: _controller,
-                          decoration:
+                                            child: Center(
+                                              child: Text(
+                                                todoPage.title ?? '',
+                                                style: const TextStyle(
+                                                    color: Colors.teal,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 30),
+                                              ),
+                                            )))),
+                              ])),
+                      const SizedBox(height: 20),
+                      Expanded(
+                        flex: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 8),
+                          decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(15)),
+                          child: SingleChildScrollView(
+                            child: TextField(
+                              textInputAction: TextInputAction.done,
+                              controller: _controller,
+                              decoration:
                               const InputDecoration.collapsed(hintText: "Text"),
-                          onEditingComplete: () async {
-                            todoPage.cmt = _controller.text;
-                            await NetWork.updateTodo(id: widget.todo.id, cmt: _controller.text);
-                          },
+                              onEditingComplete: () async {
+                                todoPage.cmt = _controller.text;
+                                await NetWork.updateTodo(id: widget.todo.id, cmt: _controller.text);
+                              },
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+            Positioned(
+                child: Center(
+                  child: Visibility(
+                    visible: !check,
+                    child: labelInternet(),
+                  ),
+                ))
+          ],
         ),
       ),
     );

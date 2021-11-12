@@ -18,13 +18,10 @@ class _TodoPageState extends State<TodoPage> {
   void initState() {
     todoPage = widget.todo;
     _controller.text = todoPage.cmt ?? '';
-    getData();
-    super.initState();
-  }
-  getData() {
-    _controller.addListener(() async {
-      await NetWork.updateTodo(id: widget.todo.id, cmt: _controller.text, title: todoPage.title == ""? widget.todo.title : todoPage.title);
+    _controller.addListener((){
+      NetWork.updateTodo(id: widget.todo.id, cmt: _controller.text, title: todoPage.title == ""? widget.todo.title : todoPage.title);
     });
+    super.initState();
   }
 
 
